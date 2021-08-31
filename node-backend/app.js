@@ -1,8 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose')
+require('dotenv').config()
 const Post = require('./models/posts')
 
-mongoose.connect("mongodb+srv://pragun:pragun@devconnector.avyq7.mongodb.net/mean_course?retryWrites=true&w=majority").then(() => {
+mongoose.connect(process.env.MONGODB_CONNECTION_URI).then(() => {
   console.log("connected to MongoDB")
 }).catch(err => {
   console.log("can't connect to databse ", err)
