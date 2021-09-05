@@ -49,11 +49,23 @@ router.post("/", upload.single("image"), (req, res, next) => {
 });
 
 router.get("/", async (req, res, next) => {
-  await Post.find().then((documents) => {
-    // console.log("document..", documents)
+
+  const pageSize = +req.query.pagesize;
+  const currentPage = +req.query.page;
+  const postQuery = Post.find();
+  let fetchedPosts;
+  if (pageSize && currentPage) {
+    postQuery.skip(pageSize * (currentPage - 1))
+      .limit(pageSize);
+  }
+  await postQuery.then((documents) => {
+    fetchedPosts = documents
+    return Post.count();
+  }).then(count => {
     res.status(200).json({
       message: "post fetched succesfully!!!!",
-      posts: documents
+      posts: fetchedPosts,
+      maxPosts: count
     })
   });
 
