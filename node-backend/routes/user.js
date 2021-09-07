@@ -53,7 +53,11 @@ router.post("/login", (req, res, next) => {
                 process.env.JWT_SECRET_KEY,
                 { expiresIn: "1h" }
             );
-            res.status(200).json({ token, expiresIn: 3600 });
+            res.status(200).json({
+                token,
+                expiresIn: 3600,
+                userId: fetchUser._id
+            });
         })
         .catch(err => {
             console.log("error", err)

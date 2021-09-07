@@ -16,13 +16,15 @@ export class PostsService {
     this.httpClient.get<{ message: string, posts: Post[], maxPosts: number }>('http://localhost:3000/api/posts' + queryParams)
       .pipe(
         map((postData: any) => {
+          console.log("postData..", postData)
           return {
             posts: postData.posts.map((post: any) => {
               return {
                 title: post.title,
                 content: post.content,
                 id: post._id,
-                imagePath: post.imagePath
+                imagePath: post.imagePath,
+                creator: post.creator
               }
             }),
             maxPosts: postData.maxPosts
@@ -41,7 +43,7 @@ export class PostsService {
   }
 
   getPost = (id: string) => {
-    return this.httpClient.get<{ _id: string, title: string, content: string, imagePath: string }>(`http://localhost:3000/api/posts/${id}`)
+    return this.httpClient.get<{ _id: string, title: string, content: string, imagePath: string, creator: string }>(`http://localhost:3000/api/posts/${id}`)
   }
 
   updatePost(id: string, title: string, content: string, image: File | string) {
@@ -58,7 +60,8 @@ export class PostsService {
         id,
         title,
         content,
-        imagePath: image
+        imagePath: image,
+        creator: null
       }
     }
     this.httpClient.put(`http://localhost:3000/api/posts/${id}`, postData)
