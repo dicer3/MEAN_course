@@ -4,6 +4,9 @@ import { Post } from "./post.model";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators"
 import { Router } from "@angular/router";
+import { environment } from "src/environments/environment";
+
+const BACKEND_URL = environment.apiUrl + "posts/"
 
 @Injectable({ providedIn: 'root' })
 export class PostsService {
@@ -13,7 +16,7 @@ export class PostsService {
   constructor(private httpClient: HttpClient, private router: Router) { }
   getPosts(postPerPage: number, currentPage: number) {
     const queryParams = `?pagesize=${postPerPage}&page=${currentPage}`
-    this.httpClient.get<{ message: string, posts: Post[], maxPosts: number }>('http://localhost:3000/api/posts' + queryParams)
+    this.httpClient.get<{ message: string, posts: Post[], maxPosts: number }>(BACKEND_URL + queryParams)
       .pipe(
         map((postData: any) => {
           console.log("postData..", postData)
@@ -43,7 +46,7 @@ export class PostsService {
   }
 
   getPost = (id: string) => {
-    return this.httpClient.get<{ _id: string, title: string, content: string, imagePath: string, creator: string }>(`http://localhost:3000/api/posts/${id}`)
+    return this.httpClient.get<{ _id: string, title: string, content: string, imagePath: string, creator: string }>(BACKEND_URL + id)
   }
 
   updatePost(id: string, title: string, content: string, image: File | string) {
@@ -64,7 +67,7 @@ export class PostsService {
         creator: null
       }
     }
-    this.httpClient.put(`http://localhost:3000/api/posts/${id}`, postData)
+    this.httpClient.put(BACKEND_URL + id, postData)
       .subscribe((response) => {
         // const updatedPosts = [...this.posts];
         // const oldPostIndex = updatedPosts.findIndex(p => p.id === id)
@@ -86,7 +89,7 @@ export class PostsService {
     postData.append("title", title);
     postData.append("content", content);
     postData.append("image", image, title);
-    this.httpClient.post<{ message: string, post: Post }>("http://localhost:3000/api/posts"
+    this.httpClient.post<{ message: string, post: Post }>(BACKEND_URL
       , postData)
       .subscribe((responseData) => {
         // const post: Post = {
@@ -104,7 +107,7 @@ export class PostsService {
   }
 
   deletePost(postId: string) {
-    return this.httpClient.delete("http://localhost:3000/api/posts/" + postId)
+    return this.httpClient.delete(BACKEND_URL + postId)
     // .subscribe((responseData) => {
     //   console.log("message...", responseData)
     //   const updatedPosts = this.posts.filter(post => post.id !== postId)
